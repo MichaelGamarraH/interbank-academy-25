@@ -1,66 +1,47 @@
-# Reto Técnico: Procesamiento de Transacciones Bancarias (CLI)
+# Prueba Técnica
 
-## Objetivo:
+## INTRODUCCIÓN
+La prueba técnica en mención se basa en el desarrollo de una aplicación que procese un archivo CSV con transacciones bancarias y genere un reporte en el cual se pueda apreciar el balance final, la transacción de mayor monto y el conteo de transacciones de acuerdo al tipo “Crédito” o “Débito”. 
 
-Desarrolla una aplicación de línea de comandos (CLI) que procese un archivo CSV con transacciones bancarias y genere un reporte que incluya:
+## INSTRUCCIONES DE EJECUCIÓN
+La aplicación está realizada en Java (versión 17) con Spring Boot 2.6.7, el cual es compatible con Spring Batch (herramienta para procesar grandes volúmenes de datos). 
+Se han utilizado las siguientes dependencias, las cuales están en el archivo `pom.xml`:
+- Spring Batch
+- Spring Boot
+- Lombok (Para getter, setter, inyección de dependencias)
 
-- **Balance Final:**  
-  Suma de los montos de las transacciones de tipo "Crédito" menos la suma de los montos de las transacciones de tipo "Débito".
+Para ejecutar el proyecto solo se necesita dar clic en **Run Application**.
 
-- **Transacción de Mayor Monto:**  
-  Identificar el ID y el monto de la transacción con el valor más alto.
+## ENFOQUE Y SOLUCIÓN
+Para desarrollar correctamente la solución, se utilizó **Spring Batch**, que permitirá leer y procesar de manera eficiente los datos. Esta herramienta es útil para sectores de banca donde cuentan con millones de datos y necesitan ser procesados eficientemente.
+La solución partió de definir la entidad **"Transacción"**, sobre la cual permitirá leer datos del archivo CSV. Se necesitaron colocar anotaciones de Lombok como `@Getter`, `@Setter`, `@AllArgsConstructor`, `@NoArgsConstructor` para facilitar las configuraciones manuales. A partir de ello, se crearon carpetas de acuerdo a su funcionalidad para separar las responsabilidades.
 
-- **Conteo de Transacciones:**  
-  Número total de transacciones para cada tipo ("Crédito" y "Débito").
+## ESTRUCTURA DEL PROYECTO
 
----
+### Carpetas:
+**com.prueba.ibk**
 
-## Instrucciones
+#### `config/SpringBatchConfig.java`:
+- **Función**: Configuración de Spring Batch, define el job, los steps, el lector y el escritor de datos, y configura la ejecución asincrónica para mejorar el rendimiento.
+- **Responsabilidad**: Configura el proceso batch para leer y procesar transacciones de un archivo CSV.
 
-1. **Repositorio Base:**  
-   Clona o haz un fork del repositorio base disponible en:  
-   `https://github.com/codeableorg/interbank-academy-25`
+#### `config/TransaccionAcumulador.java`:
+- **Función**: Acumula las transacciones leídas durante el proceso batch.
+- **Responsabilidad**: Mantiene una lista de transacciones que se van acumulando a medida que se procesan, para su posterior uso, como generar un reporte.
 
-2. **Entrada de Datos:**  
-   La aplicación deberá leer un archivo CSV. Ejemplo de contenido:
+#### `entity/Transaccion.java`:
+- **Función**: Representa la entidad **Transacción**, que sirve para mapear las transacciones.
+- **Responsabilidad**: Define la estructura de los datos que se procesan en el batch, como id, tipo y monto.
 
-   ```
-   id,tipo,monto
-   1,Crédito,100.00
-   2,Débito,50.00
-   3,Crédito,200.00
-   4,Débito,75.00
-   5,Crédito,150.00
-   ```
+#### `listener/ReporteFinalListener.java`:
+- **Función**: Escucha la finalización del job de Spring Batch y genera un reporte al finalizar.
+- **Responsabilidad**: Una vez que el job ha terminado, este listener se asegura de que se genere un reporte con las transacciones procesadas.
 
-3. **Salida del Programa:**  
-   La aplicación debe mostrar el reporte final en la terminal.  
-   Ejemplo de salida:
+#### `service/TransaccionService.java`:
+- **Función**: Servicio encargado de manejar la lógica relacionada con las transacciones.
+- **Responsabilidad**: Contiene el método que genera el reporte de las transacciones, y realiza operaciones de negocio relacionadas con las transacciones.
 
-   ```
-   Reporte de Transacciones
-   ---------------------------------------------
-   Balance Final: 325.00
-   Transacción de Mayor Monto: ID 3 - 200.00
-   Conteo de Transacciones: Crédito: 3 Débito: 2
-   ```
+### Archivos:
+- **`resources/data.csv`**: Contiene las transacciones que serán procesadas por la aplicación.
 
-4. **Lenguaje de Programación:**  
-   Utiliza el lenguaje de tu preferencia. Opciones recomendadas:
 
-   - Python
-   - Java
-   - C#
-   - JavaScript (Node.js)
-
-5. **README del Proyecto:**  
-   Incluye un archivo `README.md` con la siguiente estructura:
-
-   - **Introducción:** Breve descripción del reto y su propósito.
-   - **Instrucciones de Ejecución:** Cómo instalar dependencias y ejecutar la aplicación.
-   - **Enfoque y Solución:** Lógica implementada y decisiones de diseño.
-   - **Estructura del Proyecto:** Archivos y carpetas principales.
-
-6. **Documentación y Calidad del Código:**
-   - Código bien documentado y fácil de leer.
-   - Comentarios explicando pasos clave y lógica del programa.
